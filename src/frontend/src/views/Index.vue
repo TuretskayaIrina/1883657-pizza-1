@@ -30,8 +30,8 @@
 
               <div class="sheet__content dough">
                 <label
-                  v-for="(dough, index) of dough"
-                  :key="index"
+                  v-for="dough of dough"
+                  :key="dough.id"
                   class="dough__input"
                   :class="`dough__input--${dough.type}`"
                 >
@@ -40,7 +40,6 @@
                     name="dough"
                     :value="dough.type"
                     class="visually-hidden"
-                    checked
                   />
                   <b>{{ dough.name }}</b>
                   <span>{{ dough.description }}</span>
@@ -55,8 +54,8 @@
 
               <div class="sheet__content diameter">
                 <label
-                  v-for="(size, index) of sizes"
-                  :key="index"
+                  v-for="size of sizes"
+                  :key="size.id"
                   class="diameter__input"
                   :class="`diameter__input--${size.type}`"
                 >
@@ -83,16 +82,11 @@
                   <p>Основной соус:</p>
 
                   <label
-                    v-for="(sauce, index) of sauces"
-                    :key="index"
+                    v-for="sauce of sauces"
+                    :key="sauce.id"
                     class="radio ingredients__input"
                   >
-                    <input
-                      type="radio"
-                      name="sauce"
-                      :value="sauce.type"
-                      checked
-                    />
+                    <input type="radio" name="sauce" :value="sauce.type" />
                     <span>{{ sauce.name }}</span>
                   </label>
                 </div>
@@ -102,8 +96,8 @@
 
                   <ul class="ingredients__list">
                     <li
-                      v-for="(ingredient, index) of ingredients"
-                      :key="index"
+                      v-for="ingredient of ingredients"
+                      :key="ingredient.id"
                       class="ingredients__item"
                     >
                       <span
