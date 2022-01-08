@@ -11,9 +11,11 @@
           :class="`dough__input--${dough.type}`"
         >
           <radio-button
+            class-name="visually-hidden"
             name="dough"
             :value="dough.type"
-            class-name="visually-hidden"
+            :checked="dough.type === doughType"
+            @input="$emit('selectDough', $event)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
@@ -31,6 +33,10 @@ export default {
   props: {
     dough: {
       type: Array,
+      required: true,
+    },
+    doughType: {
+      type: String,
       required: true,
     },
   },

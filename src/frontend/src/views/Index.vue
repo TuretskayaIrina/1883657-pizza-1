@@ -1,6 +1,6 @@
 <template>
   <body>
-    <app-layout />
+    <app-layout :total="totalPrice" />
 
     <main class="content">
       <builder
@@ -8,6 +8,7 @@
         :ingredients="ingredients"
         :sauces="sauces"
         :sizes="sizes"
+        @confirm="confirmOrder"
       />
     </main>
   </body>
@@ -35,7 +36,13 @@ export default {
       ),
       sauces: sauces.map((sauce) => normalizeSauces(sauce)),
       sizes: sizes.map((size) => normalizeSizes(size)),
+      totalPrice: 0,
     };
+  },
+  methods: {
+    confirmOrder(data) {
+      this.totalPrice = data.totalPrice;
+    },
   },
 };
 </script>

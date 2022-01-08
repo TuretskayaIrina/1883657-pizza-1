@@ -11,9 +11,11 @@
           :class="`diameter__input--${size.type}`"
         >
           <radio-button
+            class-name="visually-hidden"
             name="diameter"
             :value="size.type"
-            class-name="visually-hidden"
+            :checked="size.type === sizeType"
+            @input="$emit('selectSize', $event)"
           />
           <span>{{ size.name }}</span>
         </label>
@@ -30,6 +32,10 @@ export default {
   props: {
     sizes: {
       type: Array,
+      required: true,
+    },
+    sizeType: {
+      type: String,
       required: true,
     },
   },

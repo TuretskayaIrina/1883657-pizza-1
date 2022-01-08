@@ -16,6 +16,7 @@ export const normalizeIngredients = (ingredients) => {
   return {
     ...ingredients,
     type: ingredientsTypes.find(({ name }) => ingredients.name === name)?.value,
+    count: 0,
   };
 };
 

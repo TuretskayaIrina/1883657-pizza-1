@@ -12,7 +12,12 @@
             :key="sauce.id"
             class="radio ingredients__input"
           >
-            <radio-button name="sauce" :value="sauce.type" />
+            <radio-button
+              name="sauce"
+              :value="sauce.type"
+              :checked="sauce.type === sauceType"
+              @input="$emit('selectSauce', $event)"
+            />
             <span>{{ sauce.name }}</span>
           </label>
         </div>
@@ -26,8 +31,19 @@
               :key="ingredient.id"
               class="ingredients__item"
             >
-              <selector-item :name="ingredient.name" :type="ingredient.type" />
-              <item-counter />
+              <AppDrag
+                :draggable="ingredient.count < 3"
+                :transfer-data="ingredient"
+              >
+                <selector-item
+                  :name="ingredient.name"
+                  :type="ingredient.type"
+                />
+              </AppDrag>
+              <item-counter
+                :value="ingredient.count"
+                @change="changeCount(ingredient.type, $event)"
+              />
             </li>
           </ul>
         </div>
@@ -40,9 +56,15 @@
 import RadioButton from "@/common/components/RadioButton.vue";
 import SelectorItem from "@/common/components/SelectorItem.vue";
 import ItemCounter from "@/common/components/ItemCounter.vue";
+import AppDrag from "@/common/components/AppDrag.vue";
 export default {
   name: "BuilderIngredientsSelector",
-  components: { ItemCounter, SelectorItem, RadioButton },
+  components: {
+    AppDrag,
+    ItemCounter,
+    SelectorItem,
+    RadioButton,
+  },
   props: {
     sauces: {
       type: Array,
@@ -51,6 +73,18 @@ export default {
     ingredients: {
       type: Array,
       required: true,
+    },
+    sauceType: {
+      type: String,
+      required: true,
+    },
+  },
+  methods: {
+    changeCount(type, count) {
+      this.$emit("changeCount", {
+        type,
+        count,
+      });
     },
   },
 };
