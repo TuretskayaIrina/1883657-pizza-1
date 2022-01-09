@@ -13,14 +13,7 @@
 
     <div class="content__constructor">
       <AppDrop @drop="onDrop($event)">
-        <div
-          class="pizza"
-          :class="
-            selectedDough === 'light'
-              ? `pizza--foundation--small-${selectedSauce}`
-              : `pizza--foundation--big-${selectedSauce}`
-          "
-        >
+        <div class="pizza" :class="classSelectedDough">
           <div class="pizza__wrapper">
             <template v-for="ingredient of ingredients">
               <div
@@ -83,6 +76,15 @@ export default {
     totalPrice: {
       type: Number,
       default: 0,
+    },
+  },
+  computed: {
+    classSelectedDough() {
+      let className = "";
+      this.selectedDough === "light"
+        ? (className = `pizza--foundation--small-${this.selectedSauce}`)
+        : (className = `pizza--foundation--big-${this.selectedSauce}`);
+      return className;
     },
   },
   methods: {

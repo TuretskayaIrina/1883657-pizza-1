@@ -4,7 +4,7 @@
       class="counter__button counter__button--minus"
       type="button"
       @click="handlerCountMinus"
-      :disabled="dataValue <= minValue"
+      :disabled="value <= minValue"
     >
       <span class="visually-hidden">Меньше</span>
     </button>
@@ -13,13 +13,13 @@
       type="text"
       name="counter"
       :readonly="readonly"
-      :value="dataValue"
+      :value="value"
     />
     <button
       class="counter__button counter__button--plus"
       type="button"
       @click="handlerCountPlus"
-      :disabled="dataValue >= maxValue"
+      :disabled="value >= maxValue"
     >
       <span class="visually-hidden">Больше</span>
     </button>
@@ -47,24 +47,12 @@ export default {
       default: true,
     },
   },
-  data() {
-    return {
-      dataValue: this.value,
-    };
-  },
-  watch: {
-    value: {
-      handler() {
-        this.dataValue = this.value;
-      },
-    },
-  },
   methods: {
     handlerCountPlus() {
-      this.$emit("change", ++this.dataValue);
+      this.$emit("change", this.value + 1);
     },
     handlerCountMinus() {
-      this.$emit("change", --this.dataValue);
+      this.$emit("change", this.value - 1);
     },
   },
 };
