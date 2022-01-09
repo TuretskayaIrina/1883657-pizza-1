@@ -78,18 +78,21 @@ export default {
     selectedIngredients() {
       return this.ingredients.filter((ingredient) => ingredient.count > 0);
     },
+    priceIngredients() {
+      const price = this.selectedIngredients.reduce((cost, item) => {
+        cost += item.count * item.price;
+        return cost;
+      }, 0);
+      return price;
+    },
     totalPrice() {
       //  мультипликатор размера х (стоимость теста + соус + ингредиенты).
       let total = 0;
       const multiplier = this.pizza.size.multiplier;
       const priceDough = this.pizza.dough.price;
       const priceSauce = this.pizza.sauce.price;
-      const priceIngredients = this.selectedIngredients.reduce((cost, item) => {
-        cost += item.count * item.price;
-        return cost;
-      }, 0);
 
-      total = multiplier * (priceDough + priceSauce + priceIngredients);
+      total = multiplier * (priceDough + priceSauce + this.priceIngredients);
 
       return total;
     },
