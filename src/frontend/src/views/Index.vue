@@ -1,6 +1,6 @@
 <template>
   <body>
-    <app-layout :total="totalPrice" />
+<!--    <app-layout :total="totalPrice" />-->
 
     <main class="content">
       <builder
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import AppLayout from "@/layouts/AppLayout.vue";
 import Builder from "@/modules/builder/Builder";
 import { dough, ingredients, sauces, sizes } from "@/static/pizza.json";
 import {
@@ -27,7 +26,9 @@ import {
 
 export default {
   name: "Constructor",
-  components: { Builder, AppLayout },
+  components: {
+    Builder,
+  },
   data() {
     return {
       dough: dough.map((dough) => normalizeDough(dough)),
