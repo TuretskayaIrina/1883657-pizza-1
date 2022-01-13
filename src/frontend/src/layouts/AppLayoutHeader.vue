@@ -22,13 +22,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "AppLayoutHeader",
-  props: {
-    total: {
-      type: Number,
-      default: 0,
-    },
+  computed: {
+    ...mapGetters("Cart", {
+      total: "totalPrice",
+    }),
   },
 };
 </script>

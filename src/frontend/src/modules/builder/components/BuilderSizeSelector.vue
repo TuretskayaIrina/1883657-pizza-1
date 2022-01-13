@@ -5,7 +5,7 @@
 
       <div class="sheet__content diameter">
         <label
-          v-for="size of sizes"
+          v-for="size of allSizes"
           :key="size.id"
           class="diameter__input"
           :class="`diameter__input--${size.type}`"
@@ -14,8 +14,8 @@
             class-name="visually-hidden"
             name="diameter"
             :value="size.type"
-            :checked="size.type === sizeType"
-            @input="$emit('selectSize', $event)"
+            :checked="size.id === selectedPizza.size.id"
+            @input="selectSize($event)"
           />
           <span>{{ size.name }}</span>
         </label>
@@ -25,19 +25,22 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+import { UPDATE_PIZZA_SIZE } from "@/store/mutation-types.js";
 import RadioButton from "@/common/components/RadioButton.vue";
 export default {
   name: "BuilderSizeSelector",
   components: { RadioButton },
-  props: {
-    sizes: {
-      type: Array,
-      required: true,
-    },
-    sizeType: {
-      type: String,
-      required: true,
-    },
+  computed: {
+    ...mapGetters("Builder", {
+      allSizes: "allSizes",
+      selectedPizza: "selectedPizza",
+    }),
+  },
+  methods: {
+    ...mapMutations("Builder", {
+      selectSize: UPDATE_PIZZA_SIZE,
+    }),
   },
 };
 </script>

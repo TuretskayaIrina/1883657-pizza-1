@@ -98,5 +98,20 @@ export const sizesTypes = [
   },
 ];
 
+export const miscTypes = [
+  {
+    name: "Cola-Cola 0,5 литра",
+    value: "colaSmall",
+  },
+  {
+    name: "Острый соус",
+    value: "spicySauce",
+  },
+  {
+    name: "Картошка из печи",
+    value: "FrenchFries",
+  },
+];
+
 export const MOVE = "move";
 export const DATA_TRANSFER_PAYLOAD = "payload";

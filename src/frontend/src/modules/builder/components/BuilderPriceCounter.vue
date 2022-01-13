@@ -1,29 +1,26 @@
 <template>
   <div class="content__result">
-    <p>Итого: {{ totalPrice }} ₽</p>
-    <button
-      type="button"
-      class="button"
-      :disabled="disabled"
-      @click="$emit('submit')"
-    >
-      Готовьте!
-    </button>
+    <p>Итого: {{ costPizza }} ₽</p>
+    <button type="submit" class="button" :disabled="disabled">Готовьте!</button>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "BuilderPriceCounter",
   props: {
-    totalPrice: {
-      type: Number,
-      default: 0,
-    },
     disabled: {
       type: Boolean,
       default: true,
     },
+  },
+  computed: {
+    ...mapGetters("Builder", {
+      selectedPizza: "selectedPizza",
+      costPizza: "costPizza",
+    }),
   },
 };
 </script>

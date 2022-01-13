@@ -8,15 +8,15 @@
           <p>Основной соус:</p>
 
           <label
-            v-for="sauce of sauces"
+            v-for="sauce of allSauces"
             :key="sauce.id"
             class="radio ingredients__input"
           >
             <radio-button
               name="sauce"
               :value="sauce.type"
-              :checked="sauce.type === sauceType"
-              @input="$emit('selectSauce', $event)"
+              :checked="sauce.id === selectedPizza.sauce.id"
+              @input="selectSauce($event)"
             />
             <span>{{ sauce.name }}</span>
           </label>
@@ -27,7 +27,7 @@
 
           <ul class="ingredients__list">
             <li
-              v-for="ingredient of ingredients"
+              v-for="ingredient of allIngredients"
               :key="ingredient.id"
               class="ingredients__item"
             >
@@ -41,8 +41,9 @@
                 />
               </AppDrag>
               <item-counter
+                class="ingredients__counter"
                 :value="ingredient.count"
-                @change="changeCount(ingredient.type, $event)"
+                @change="changeCount({ type: ingredient.type, count: $event })"
               />
             </li>
           </ul>
@@ -53,6 +54,11 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+import {
+  UPDATE_PIZZA_SAUCE,
+  UPDATE_PIZZA_INGREDIENT_COUNT,
+} from "@/store/mutation-types.js";
 import RadioButton from "@/common/components/RadioButton.vue";
 import SelectorItem from "@/common/components/SelectorItem.vue";
 import ItemCounter from "@/common/components/ItemCounter.vue";
@@ -65,27 +71,18 @@ export default {
     SelectorItem,
     RadioButton,
   },
-  props: {
-    sauces: {
-      type: Array,
-      required: true,
-    },
-    ingredients: {
-      type: Array,
-      required: true,
-    },
-    sauceType: {
-      type: String,
-      required: true,
-    },
+  computed: {
+    ...mapGetters("Builder", {
+      allIngredients: "allIngredients",
+      allSauces: "allSauces",
+      selectedPizza: "selectedPizza",
+    }),
   },
   methods: {
-    changeCount(type, count) {
-      this.$emit("changeCount", {
-        type,
-        count,
-      });
-    },
+    ...mapMutations("Builder", {
+      selectSauce: UPDATE_PIZZA_SAUCE,
+      changeCount: UPDATE_PIZZA_INGREDIENT_COUNT,
+    }),
   },
 };
 </script>
