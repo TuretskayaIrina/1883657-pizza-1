@@ -1,6 +1,6 @@
 <template>
   <div class="content__result">
-    <p>Итого: {{ costPizza }} ₽</p>
+    <p>Итого: {{ selectedPizza.cost }} ₽</p>
     <button type="submit" class="button" :disabled="disabled">Готовьте!</button>
   </div>
 </template>
@@ -19,7 +19,6 @@ export default {
   computed: {
     ...mapGetters("Builder", {
       selectedPizza: "selectedPizza",
-      costPizza: "costPizza",
     }),
   },
 };

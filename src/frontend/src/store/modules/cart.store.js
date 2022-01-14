@@ -1,10 +1,10 @@
 import misc from "@/static/misc.json";
 import {
-  UPDATE_TOTAL_PRICE,
+  SET_MISC,
   PUT_PIZZA_TO_CART,
+  UPDATE_ADDITION_PRODUCT_COUNT,
 } from "@/store/mutation-types.js";
 import { normalizeMisc } from "@/common/helpers.js";
-import { SET_MISC } from "@/store/mutation-types.js";
 
 export default {
   namespaced: true,
@@ -14,32 +14,47 @@ export default {
       pizzasList: [],
       miscList: [],
     },
-    totalPrice: 0,
   },
   getters: {
     allMisc(state) {
       return state.allMisc;
     },
     cart(state) {
-      return state.cart;
+      const cart = {
+        pizzasList: state.cart.pizzasList,
+        miscList: state.allMisc.filter((item) => item.count > 0),
+      };
+      return cart;
     },
-    totalPrice(state) {
-      // TODO: Подумать
-      // const costPizzas = state.cart.pizzasList.map((item) => item.costPizza);
-      // if (costPizzas.length !== 0) {
-      //   state.totalPrice = costPizzas.reduce((a, b) => a + b);
-      // }
+    totalCost(state) {
+      let totalCostPizzas = 0;
 
-      return state.totalPrice;
+      const costPizzas = state.cart.pizzasList.map((item) => item.cost);
+      if (costPizzas.length !== 0) {
+        totalCostPizzas = costPizzas.reduce((a, b) => a + b);
+      }
+
+      const totalCostAdditionalProducts = state.allMisc
+        .filter((item) => item.count > 0)
+        .reduce((cost, item) => {
+          cost += item.count * item.price;
+          return cost;
+        }, 0);
+
+      return totalCostPizzas + totalCostAdditionalProducts;
     },
   },
   mutations: {
     [SET_MISC](state, payload) {
       state.allMisc = payload;
     },
-    [UPDATE_TOTAL_PRICE](state, payload) {
-      console.log(state);
-      console.log(payload);
+    [UPDATE_ADDITION_PRODUCT_COUNT](state, { type, count }) {
+      const selectedProduct = state.allMisc.find(
+        (product) => product.type === type
+      );
+      if (selectedProduct) {
+        selectedProduct.count = count;
+      }
     },
     [PUT_PIZZA_TO_CART](state, payload) {
       state.cart.pizzasList.push(payload);
@@ -50,8 +65,8 @@ export default {
       const allMisc = misc.map((misc) => normalizeMisc(misc));
       commit(SET_MISC, allMisc);
     },
-    addPizza({ commit }, { pizza, costPizza }) {
-      commit(PUT_PIZZA_TO_CART, { pizza, costPizza });
+    addPizza({ commit, rootGetters }) {
+      commit(PUT_PIZZA_TO_CART, rootGetters["Builder/selectedPizza"]);
     },
   },
 };

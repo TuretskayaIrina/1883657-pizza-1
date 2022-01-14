@@ -57,19 +57,24 @@ export default {
         size: state.pizza.size,
       };
 
+      const cost = () => {
+        const multiplier = state.pizza.size.multiplier;
+        const priceDough = state.pizza.dough.price;
+        const priceSauce = state.pizza.sauce.price;
+
+        const priceIngredients = state.ingredients
+          .filter((ingredient) => ingredient.count > 0)
+          .reduce((cost, item) => {
+            cost += item.count * item.price;
+            return cost;
+          }, 0);
+
+        return multiplier * (priceDough + priceSauce + priceIngredients);
+      };
+
+      pizza.cost = cost();
+
       return pizza;
-    },
-    costPizza(state) {
-      const multiplier = state.pizza.size.multiplier;
-      const priceDough = state.pizza.dough.price;
-      const priceSauce = state.pizza.sauce.price;
-
-      const priceIngredients = state.pizza.ingredients.reduce((cost, item) => {
-        cost += item.count * item.price;
-        return cost;
-      }, 0);
-
-      return multiplier * (priceDough + priceSauce + priceIngredients);
     },
   },
   mutations: {

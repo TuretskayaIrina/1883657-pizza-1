@@ -11,7 +11,7 @@
       </router-link>
     </div>
     <div class="header__cart">
-      <router-link to="/cart">{{ total }} ₽</router-link>
+      <router-link to="/cart">{{ totalCost }} ₽</router-link>
     </div>
     <div class="header__user">
       <router-link to="/login">
@@ -28,7 +28,7 @@ export default {
   name: "AppLayoutHeader",
   computed: {
     ...mapGetters("Cart", {
-      total: "totalPrice",
+      totalCost: "totalCost",
     }),
   },
 };

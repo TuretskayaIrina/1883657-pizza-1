@@ -8,7 +8,7 @@
       <builder-ingredients-selector />
       <builder-pizza-view />
     </div>
-    <pre>costPizza{{ costPizza }}</pre>
+    <pre>selectedPizza.cost: {{ selectedPizza.cost }}</pre>
     <pre>selectedPizza{{ selectedPizza }}</pre>
   </form>
 </template>
@@ -43,9 +43,10 @@ export default {
       putToCart: "addPizza",
     }),
     submit() {
-      this.putToCart({ pizza: this.selectedPizza, costPizza: this.costPizza });
+      this.putToCart();
       this.resetPizza();
-      this.$router.push('/cart');
+      // TODO: Вернуть редирект?
+      // this.$router.push('/cart');
     },
   },
 };

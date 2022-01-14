@@ -13,7 +13,11 @@
 
         <!-- TODO: v-if="cart.pizzasList.length != 0 && cart.miscList.length != 0"-->
         <ul class="cart-list sheet">
-          <li v-for="(pizza, index) of cart.pizzasList" :key="index" class="cart-list__item">
+          <li
+            v-for="(pizza, index) of cart.pizzasList"
+            :key="index"
+            class="cart-list__item"
+          >
             <div class="product cart-list__product">
               <!-- TODO: Картинка??? -->
               <img
@@ -24,37 +28,14 @@
                 alt="Капричоза"
               />
               <div class="product__text">
-                <h2>{{pizza.name}}</h2>
+                <h2>{{ pizza.name }}</h2>
                 <ul>
-                  <li>{{ pizza.size.name }}, тесто: {{ pizza.dough.name }}</li>
+                  <li>Тесто: {{ pizza.dough.name }}</li>
+                  <li>Размер: {{ pizza.size.name }}</li>
                   <li>Соус: {{ pizza.sauce.name }}</li>
-<!--                  TODO: начинка-->
-                  <li>Начинка: грибы, лук, ветчина, пармезан, ананас</li>
+                  <li>Начинка: {{ getIngredientsNames(pizza.ingredients) }}</li>
                 </ul>
               </div>
-            </div>
-
-            <div class="counter cart-list__counter">
-              <button
-                type="button"
-                class="counter__button counter__button--minus"
-              >
-                <span class="visually-hidden">Меньше</span>
-              </button>
-              <input
-                type="text"
-                name="counter"
-                class="counter__input"
-                value="1"
-              />
-              <button
-                type="button"
-                class="
-                  counter__button counter__button--plus counter__button--orange
-                "
-              >
-                <span class="visually-hidden">Больше</span>
-              </button>
             </div>
 
             <!-- TODO: maxValue? -->
@@ -66,9 +47,10 @@
             />
 
             <div class="cart-list__price">
-              <b>782 ₽</b>
+              <b>{{ pizza.cost }} ₽</b>
             </div>
 
+            <!-- TODO: redirect to builder -->
             <div class="cart-list__button">
               <button type="button" class="cart-list__edit">Изменить</button>
             </div>
@@ -97,12 +79,13 @@
                 <item-counter
                   :orange-mode="true"
                   :value="misc.count"
-                  :max-value="100"
+                  :max-value="99"
+                  @change="changeCount({ type: misc.type, count: $event })"
                   class="additional-list__counter"
                 />
 
                 <div class="additional-list__price">
-                  <b>× 56 ₽</b>
+                  <b>× {{misc.price}} ₽</b>
                 </div>
               </div>
             </li>
@@ -164,19 +147,21 @@
         Перейти к конструктору<br />чтоб собрать ещё одну пиццу
       </p>
       <div class="footer__price">
-        <b>Итого: 2 228 ₽</b>
+        <b>Итого: {{ totalCost }} ₽</b>
       </div>
 
       <div class="footer__submit">
         <button type="submit" class="button">Оформить заказ</button>
       </div>
     </section>
+    <pre>cart{{ cart }}</pre>
     <pre>allMisc{{ allMisc }}</pre>
   </form>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import {mapGetters, mapMutations} from "vuex";
+import {UPDATE_ADDITION_PRODUCT_COUNT} from "@/store/mutation-types.js";
 import ItemCounter from "../common/components/ItemCounter";
 
 export default {
@@ -186,7 +171,17 @@ export default {
     ...mapGetters("Cart", {
       allMisc: "allMisc",
       cart: "cart",
+      totalCost: "totalCost",
     }),
+  },
+  methods: {
+    ...mapMutations("Cart", {
+      changeCount: UPDATE_ADDITION_PRODUCT_COUNT,
+    }),
+    getIngredientsNames(ingredientsList) {
+      const formattedText = ingredientsList.map((item) => item.name).join(', ');
+      return formattedText;
+    },
   },
 };
 </script>
