@@ -4,6 +4,7 @@ import {
   SET_INGREDIENTS,
   SET_SAUCES,
   SET_SIZES,
+  UPDATE_PIZZA,
   UPDATE_PIZZA_NAME,
   UPDATE_PIZZA_DOUGH,
   UPDATE_PIZZA_SAUCE,
@@ -26,11 +27,13 @@ export default {
     sauces: [],
     sizes: [],
     pizza: {
+      id: null,
       name: "",
       dough: dough[0],
       sauce: sauces[0],
       size: sizes[0],
       ingredients: [],
+      quantity: 1,
     },
   },
   getters: {
@@ -48,6 +51,7 @@ export default {
     },
     selectedPizza(state) {
       const pizza = {
+        id: state.pizza.id,
         name: state.pizza.name,
         dough: state.pizza.dough,
         ingredients: state.ingredients.filter(
@@ -55,6 +59,7 @@ export default {
         ),
         sauce: state.pizza.sauce,
         size: state.pizza.size,
+        quantity: state.pizza.quantity,
       };
 
       const cost = () => {
@@ -76,6 +81,9 @@ export default {
 
       return pizza;
     },
+    checkedPizza(state) {
+      return state.pizza.id;
+    },
   },
   mutations: {
     [SET_DOUGH](state, payload) {
@@ -89,6 +97,28 @@ export default {
     },
     [SET_SIZES](state, payload) {
       state.sizes = payload;
+    },
+    [UPDATE_PIZZA](state, payload) {
+      state.ingredients.map((ingredient) => {
+        const selectedIngredient = payload.ingredients.find(
+          (item) => item.type === ingredient.type
+        );
+        if (selectedIngredient) {
+          ingredient.count = selectedIngredient.count;
+        }
+      });
+
+      state.pizza = {
+        id: payload.id,
+        name: payload.name,
+        dough: payload.dough,
+        sauce: payload.sauce,
+        size: payload.size,
+        ingredients: state.ingredients.filter(
+          (ingredient) => ingredient.count > 0
+        ),
+        quantity: payload.quantity,
+      };
     },
     [UPDATE_PIZZA_NAME](state, payload) {
       state.pizza.name = payload;
@@ -112,11 +142,13 @@ export default {
     },
     [RESET_PIZZA](state) {
       state.pizza = {
+        id: null,
         name: "",
         dough: dough[0],
         sauce: sauces[0],
         size: sizes[0],
         ingredients: [],
+        quantity: 1,
       };
 
       state.ingredients = state.ingredients.map((item) => {

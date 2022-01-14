@@ -1,18 +1,19 @@
 <template>
-  <form action="test.html" method="post" class="layout-form">
+  <form class="layout-form">
     <main class="content cart">
       <div class="container">
         <div class="cart__title">
           <h1 class="title title--big">Корзина</h1>
         </div>
 
-        <!--        TODO-->
-        <!--        <div v-if="cart.pizzasList.length === 0 && cart.miscList.length === 0" class="sheet cart__empty">-->
-        <!--          <p>В корзине нет ни одного товара</p>-->
-        <!--        </div>-->
+        <div
+          v-if="cart.pizzasList.length === 0 && cart.miscList.length === 0"
+          class="sheet cart__empty"
+        >
+          <p>В корзине нет ни одного товара</p>
+        </div>
 
-        <!-- TODO: v-if="cart.pizzasList.length != 0 && cart.miscList.length != 0"-->
-        <ul class="cart-list sheet">
+        <ul v-if="cart.pizzasList.length !== 0" class="cart-list sheet">
           <li
             v-for="(pizza, index) of cart.pizzasList"
             :key="index"
@@ -38,21 +39,28 @@
               </div>
             </div>
 
-            <!-- TODO: maxValue? -->
             <item-counter
               :orange-mode="true"
               :value="pizza.quantity"
-              :max-value="100"
+              :max-value="99"
               class="cart-list__counter"
+              @change="
+                changePizzasQuantity({ name: pizza.name, quantity: $event })
+              "
             />
 
             <div class="cart-list__price">
               <b>{{ pizza.cost }} ₽</b>
             </div>
 
-            <!-- TODO: redirect to builder -->
             <div class="cart-list__button">
-              <button type="button" class="cart-list__edit">Изменить</button>
+              <button
+                @click="changePizza(pizza)"
+                type="button"
+                class="cart-list__edit"
+              >
+                Изменить
+              </button>
             </div>
           </li>
         </ul>
@@ -75,7 +83,6 @@
               </p>
 
               <div class="additional-list__wrapper">
-                <!-- TODO: maxValue? -->
                 <item-counter
                   :orange-mode="true"
                   :value="misc.count"
@@ -85,14 +92,17 @@
                 />
 
                 <div class="additional-list__price">
-                  <b>× {{misc.price}} ₽</b>
+                  <b>× {{ misc.price }} ₽</b>
                 </div>
               </div>
             </li>
           </ul>
         </div>
 
-        <div class="cart__form">
+        <div
+          v-if="cart.pizzasList.length !== 0 || cart.miscList.length !== 0"
+          class="cart__form"
+        >
           <div class="cart-form">
             <label class="cart-form__select">
               <span class="cart-form__label">Получение заказа:</span>
@@ -137,7 +147,10 @@
         </div>
       </div>
     </main>
-    <section class="footer">
+    <section
+      v-if="cart.pizzasList.length !== 0 || cart.miscList.length !== 0"
+      class="footer"
+    >
       <div class="footer__more">
         <router-link to="/" class="button button--border button--arrow">
           Хочу еще одну
@@ -150,23 +163,36 @@
         <b>Итого: {{ totalCost }} ₽</b>
       </div>
 
-      <div class="footer__submit">
-        <button type="submit" class="button">Оформить заказ</button>
+      <div @click="submitOrder" class="footer__submit">
+        <button type="button" class="button">Оформить заказ</button>
       </div>
     </section>
+    <Modal v-if="showModal" @close="closeModal" />
+
     <pre>cart{{ cart }}</pre>
-    <pre>allMisc{{ allMisc }}</pre>
   </form>
 </template>
 
 <script>
-import {mapGetters, mapMutations} from "vuex";
-import {UPDATE_ADDITION_PRODUCT_COUNT} from "@/store/mutation-types.js";
+import { mapGetters, mapMutations } from "vuex";
+import {
+  UPDATE_PIZZA,
+  UPDATE_ADDITION_PRODUCT_COUNT,
+  UPDATE_PIZZAS_QUANTITY,
+  RESET_CART,
+  CONFIRM_ORDER,
+} from "@/store/mutation-types.js";
 import ItemCounter from "../common/components/ItemCounter";
+import Modal from "../common/components/Modal";
 
 export default {
   name: "Cart",
-  components: { ItemCounter },
+  data() {
+    return {
+      showModal: false,
+    };
+  },
+  components: { Modal, ItemCounter },
   computed: {
     ...mapGetters("Cart", {
       allMisc: "allMisc",
@@ -175,12 +201,36 @@ export default {
     }),
   },
   methods: {
+    ...mapMutations("Builder", {
+      updatePizza: UPDATE_PIZZA,
+    }),
     ...mapMutations("Cart", {
       changeCount: UPDATE_ADDITION_PRODUCT_COUNT,
+      changePizzasQuantity: UPDATE_PIZZAS_QUANTITY,
+      resetCart: RESET_CART,
+    }),
+    ...mapMutations("Orders", {
+      confirmOrder: CONFIRM_ORDER,
     }),
     getIngredientsNames(ingredientsList) {
-      const formattedText = ingredientsList.map((item) => item.name).join(', ');
+      const formattedText = ingredientsList.map((item) => item.name).join(", ");
       return formattedText;
+    },
+    changePizza(pizza) {
+      this.updatePizza(pizza);
+      this.$router.push("/");
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.resetCart();
+      this.showModal = false;
+      this.$router.push("/orders");
+    },
+    submitOrder() {
+      this.confirmOrder({ cost: this.totalCost, order: this.cart });
+      this.openModal();
     },
   },
 };

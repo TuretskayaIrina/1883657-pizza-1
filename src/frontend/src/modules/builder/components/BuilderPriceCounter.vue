@@ -1,12 +1,20 @@
 <template>
   <div class="content__result">
     <p>Итого: {{ selectedPizza.cost }} ₽</p>
-    <button type="submit" class="button" :disabled="disabled">Готовьте!</button>
+    <button
+      @click="checkedPizza ? edit() : submit()"
+      type="button"
+      class="button"
+      :disabled="disabled"
+    >
+      Готовьте!
+    </button>
   </div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import { RESET_PIZZA } from "@/store/mutation-types.js";
 
 export default {
   name: "BuilderPriceCounter",
@@ -19,7 +27,27 @@ export default {
   computed: {
     ...mapGetters("Builder", {
       selectedPizza: "selectedPizza",
+      checkedPizza: "checkedPizza",
     }),
+  },
+  methods: {
+    ...mapMutations("Builder", {
+      resetPizza: RESET_PIZZA,
+    }),
+    ...mapActions("Cart", {
+      editPizza: "editPizza",
+      putToCart: "addPizza",
+    }),
+    edit() {
+      this.editPizza(this.selectedPizza);
+      this.resetPizza();
+      this.$router.push("/cart");
+    },
+    submit() {
+      this.putToCart();
+      this.resetPizza();
+      this.$router.push("/cart");
+    },
   },
 };
 </script>

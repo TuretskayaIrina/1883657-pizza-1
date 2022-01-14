@@ -2,7 +2,10 @@ import misc from "@/static/misc.json";
 import {
   SET_MISC,
   PUT_PIZZA_TO_CART,
+  UPDATE_PIZZA_IN_CART,
   UPDATE_ADDITION_PRODUCT_COUNT,
+  UPDATE_PIZZAS_QUANTITY,
+  RESET_CART,
 } from "@/store/mutation-types.js";
 import { normalizeMisc } from "@/common/helpers.js";
 
@@ -21,7 +24,7 @@ export default {
     },
     cart(state) {
       const cart = {
-        pizzasList: state.cart.pizzasList,
+        pizzasList: state.cart.pizzasList.filter((item) => item.quantity > 0),
         miscList: state.allMisc.filter((item) => item.count > 0),
       };
       return cart;
@@ -29,9 +32,12 @@ export default {
     totalCost(state) {
       let totalCostPizzas = 0;
 
-      const costPizzas = state.cart.pizzasList.map((item) => item.cost);
-      if (costPizzas.length !== 0) {
-        totalCostPizzas = costPizzas.reduce((a, b) => a + b);
+      const pizzaTypeCost = state.cart.pizzasList.map((item) => {
+        return item.quantity * item.cost;
+      });
+
+      if (pizzaTypeCost.length !== 0) {
+        totalCostPizzas = pizzaTypeCost.reduce((a, b) => a + b);
       }
 
       const totalCostAdditionalProducts = state.allMisc
@@ -57,7 +63,33 @@ export default {
       }
     },
     [PUT_PIZZA_TO_CART](state, payload) {
+      payload.id = Math.floor(Math.random() * 1000);
       state.cart.pizzasList.push(payload);
+    },
+    [UPDATE_PIZZAS_QUANTITY](state, { name, quantity }) {
+      const selectedPizza = state.cart.pizzasList.find(
+        (pizza) => pizza.name === name
+      );
+      selectedPizza.quantity = quantity;
+    },
+    [UPDATE_PIZZA_IN_CART](state, payload) {
+      const selectedPizza = state.cart.pizzasList.find(
+        (pizza) => pizza.id === payload.id
+      );
+
+      if (selectedPizza) {
+        Object.assign(selectedPizza, payload);
+      }
+    },
+    [RESET_CART](state) {
+      state.cart = {
+        pizzasList: [],
+        miscList: [],
+      };
+
+      state.allMisc = state.allMisc.map((item) => {
+        return { ...item, count: 0 };
+      });
     },
   },
   actions: {
@@ -67,6 +99,9 @@ export default {
     },
     addPizza({ commit, rootGetters }) {
       commit(PUT_PIZZA_TO_CART, rootGetters["Builder/selectedPizza"]);
+    },
+    editPizza({ commit, rootGetters }) {
+      commit(UPDATE_PIZZA_IN_CART, rootGetters["Builder/selectedPizza"]);
     },
   },
 };
