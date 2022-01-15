@@ -3,6 +3,7 @@ import {
   ingredientsTypes,
   saucesTypes,
   sizesTypes,
+  miscTypes,
 } from "./constans.js";
 
 export const normalizeDough = (dough) => {
@@ -31,5 +32,13 @@ export const normalizeSizes = (sizes) => {
   return {
     ...sizes,
     type: sizesTypes.find(({ name }) => sizes.name === name)?.value,
+  };
+};
+
+export const normalizeMisc = (misc) => {
+  return {
+    ...misc,
+    type: miscTypes.find(({ name }) => misc.name === name)?.value,
+    count: 0,
   };
 };

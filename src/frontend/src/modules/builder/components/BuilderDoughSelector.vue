@@ -5,7 +5,7 @@
 
       <div class="sheet__content dough">
         <label
-          v-for="dough of dough"
+          v-for="dough of allDough"
           :key="dough.id"
           class="dough__input"
           :class="`dough__input--${dough.type}`"
@@ -14,8 +14,8 @@
             class-name="visually-hidden"
             name="dough"
             :value="dough.type"
-            :checked="dough.type === doughType"
-            @input="$emit('selectDough', $event)"
+            :checked="dough.id === selectedPizza.dough.id"
+            @input="selectDough($event)"
           />
           <b>{{ dough.name }}</b>
           <span>{{ dough.description }}</span>
@@ -26,19 +26,22 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+import { UPDATE_PIZZA_DOUGH } from "@/store/mutation-types.js";
 import RadioButton from "@/common/components/RadioButton.vue";
 export default {
   name: "BuilderDoughSelector",
   components: { RadioButton },
-  props: {
-    dough: {
-      type: Array,
-      required: true,
-    },
-    doughType: {
-      type: String,
-      required: true,
-    },
+  computed: {
+    ...mapGetters("Builder", {
+      allDough: "allDough",
+      selectedPizza: "selectedPizza",
+    }),
+  },
+  methods: {
+    ...mapMutations("Builder", {
+      selectDough: UPDATE_PIZZA_DOUGH,
+    }),
   },
 };
 </script>

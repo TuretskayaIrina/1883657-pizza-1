@@ -5,7 +5,8 @@
     :name="name"
     :value="value"
     :checked="checked"
-    @input="$emit('input', $event.target.value)" />
+    @input="$emit('input', $event.target.value)"
+  />
 </template>
 
 <script>
@@ -14,7 +15,7 @@ export default {
   props: {
     className: {
       type: String,
-      default: '',
+      default: "",
     },
     type: {
       type: String,

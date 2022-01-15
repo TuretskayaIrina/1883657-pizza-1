@@ -1,5 +1,5 @@
 <template>
-  <div class="counter counter--orange ingredients__counter">
+  <div class="counter counter--orange">
     <button
       class="counter__button counter__button--minus"
       type="button"
@@ -17,6 +17,7 @@
     />
     <button
       class="counter__button counter__button--plus"
+      :class="orangeMode ? 'counter__button--orange' : ''"
       type="button"
       @click="handlerCountPlus"
       :disabled="value >= maxValue"
@@ -45,6 +46,10 @@ export default {
     readonly: {
       type: Boolean,
       default: true,
+    },
+    orangeMode: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
