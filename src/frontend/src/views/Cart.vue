@@ -167,9 +167,7 @@
         <button type="button" class="button">Оформить заказ</button>
       </div>
     </section>
-    <Modal v-if="showModal" @close="closeModal" />
-
-    <pre>cart{{ cart }}</pre>
+    <Modal :showModal="showModal" @close="closeModal" />
   </form>
 </template>
 

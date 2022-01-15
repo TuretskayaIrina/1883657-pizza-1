@@ -1,5 +1,5 @@
 <template>
-  <div class="popup">
+  <div v-if="showModal" class="popup">
     <span @click="close" class="close">
       <span class="visually-hidden">Закрыть попап</span>
     </span>
@@ -16,26 +16,28 @@
 <script>
 export default {
   name: "Modal",
-  created() {
-    document.body.addEventListener("keydown", (evt) => {
-      if (evt.key === "Escape") {
-        this.$emit("close");
-      }
-    });
+  props: {
+    showModal: {
+      type: Boolean,
+      default: false,
+    },
   },
-  unmounted() {
-    document.body.removeEventListener("keydown", (evt) => {
-      if (evt.key === "Escape") {
-        this.$emit("close");
-      }
-    });
+  created() {
+    document.body.addEventListener("keydown", this.onKeyDown);
+  },
+  destroyed() {
+    document.body.removeEventListener("keydown", this.onKeyDown);
   },
   methods: {
     close() {
       this.$emit("close");
     },
+    onKeyDown(evt) {
+      if (this.showModal && evt.key === "Escape") {
+        this.close();
+      }
+    },
   },
-  emits: ["close"],
 };
 </script>
 

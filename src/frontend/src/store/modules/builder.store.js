@@ -99,7 +99,7 @@ export default {
       state.sizes = payload;
     },
     [UPDATE_PIZZA](state, payload) {
-      state.ingredients.map((ingredient) => {
+      state.ingredients.forEach((ingredient) => {
         const selectedIngredient = payload.ingredients.find(
           (item) => item.type === ingredient.type
         );
